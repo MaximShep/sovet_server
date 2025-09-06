@@ -27,7 +27,7 @@ class PollsController {
 // Получение всех активных опросов
     async getActivePolls(req, res) {
     const query = `
-        SELECT * FROM polls WHERE expiration_date >= datetime('now') ORDER BY created_at DESC
+        SELECT * FROM polls WHERE expiration_date <= date('now') ORDER BY created_at DESC
     `;
 
     db.all(query, [], (err, rows) => {

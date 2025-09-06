@@ -60,8 +60,9 @@ class PostController {
 
 // Обновление количества лайков
     async updateLikes(req, res) {
-    const { id } = req.body;
-    const { likes } = req.body;
+    const { id, likes } = req.body;
+
+
 
     const query = `
         UPDATE posts SET likes = ? WHERE id = ?
@@ -70,14 +71,14 @@ class PostController {
     db.run(query, [likes, id], function (err) {
         if (err) {
             console.error('Ошибка при обновлении лайков:', err.message);
-            return res.status(500).send('Ошибка при обновлении лайков.');
+            return res.status(500).json({ error: 'Ошибка при обновлении лайков.' });
         }
 
         if (this.changes === 0) {
-            return res.status(404).send('Пост не найден.');
+            return res.status(404).json({ error: 'Пост не найден.' });
         }
 
-        res.status(200).send('Количество лайков обновлено.');
+        res.status(200).json({ message: 'Количество лайков обновлено.' });
     });
 };
 

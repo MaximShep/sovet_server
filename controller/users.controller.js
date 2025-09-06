@@ -53,7 +53,7 @@ class UserController {
     }
 
     // Получение пользователя по ID
-    async getUser(req, res) {
+    async getUserById(req, res) {
         const { id } = req.body;
 
         const sql = "SELECT * FROM users WHERE id = ?";
@@ -66,6 +66,23 @@ class UserController {
 
             if (!row) {
                 return res.status(404).json({ error: 'User not found' });
+            }
+
+            return res.json(row);
+        });
+    }
+    async getUserByLogin(req, res) {
+        const { login, password } = req.body;
+        const sql = "SELECT * FROM users WHERE login = ? AND password = ?";
+
+        db.get(sql, [login, password], (err, row) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+
+            if (!row) {
+                return res.status(404).json({ error: 'Данные не совпадают! Проверьте и повторите попытку' });
             }
 
             return res.json(row);

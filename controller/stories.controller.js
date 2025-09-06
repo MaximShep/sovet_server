@@ -3,13 +3,13 @@ const db = require('../config.js'); // Подключение к базе дан
 class StoriesController {
 // Создание новой истории
     async createStory (req, res){
-    const { title, content, expiration_date } = req.body;
+    const { preview, title, content, expiration_date } = req.body;
     const query = `
-        INSERT INTO stories (title, content, created_at, expiration_date)
-        VALUES (?, ?, datetime('now'), ?)
+        INSERT INTO stories (preview, title, content, created_at, expiration_date)
+        VALUES (?, ?, ?, datetime('now'), ?)
     `;
 
-    db.run(query, [title, JSON.stringify(content), expiration_date], function (err) {
+    db.run(query, [preview, title, JSON.stringify(content), expiration_date], function (err) {
         if (err) {
             console.error('Ошибка при создании истории:', err.message);
             return res.status(500).send('Ошибка при создании истории.');
@@ -22,7 +22,7 @@ class StoriesController {
 // Получение всех активных историй (не истёкших)
     async getActiveStories (req, res){
     const query = `
-        SELECT * FROM stories WHERE expiration_date >= datetime('now') ORDER BY created_at DESC
+        SELECT * FROM stories WHERE expiration_date <= datetime('now') ORDER BY created_at DESC
     `;
 
     db.all(query, [], (err, rows) => {

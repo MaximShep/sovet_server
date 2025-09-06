@@ -16,6 +16,7 @@ const goalRouter = require('./routes/goals.routes.js')
 const presidentRouter = require('./routes/presidents.routes.js')
 const graduateRouter = require('./routes/graduates.routes.js')
 const projectRouter = require('./routes/projects.routes.js')
+const filtersRouter = require('./routes/filters.routes.js')
 const bodyParser = require('body-parser');
 const uploadRoutes = require("./routes/uploadRoutes");
 const cors = require("cors");
@@ -50,6 +51,8 @@ app.use('/api',progressRouter)
 app.use('/api',presidentRouter)
 app.use('/api',graduateRouter)
 app.use('/api',projectRouter)
+app.use('/api',filtersRouter)
+
 
 
 
