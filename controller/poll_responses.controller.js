@@ -1,68 +1,70 @@
 const db = require('../config.js'); // Подключение к базе данных
 
 class PollResponsesController {
-// Создание записи о прохождении опроса
+    // Создание записи о прохождении опроса
     async createPollResponse(req, res) {
-    const { poll_id, user_id } = req.body;
+        const { poll_id, user_id } = req.body;
 
-    const query = `
+        const query = `
         INSERT INTO poll_responses (poll_id, user_id)
         VALUES (?, ?)
     `;
 
-    db.run(query, [poll_id, user_id], function (err) {
-        if (err) {
-            console.error('Ошибка при создании ответа на опрос:', err.message);
-            return res.status(500).send('Ошибка при создании ответа на опрос.');
-        }
+        db.run(query, [poll_id, user_id], function (err) {
+            if (err) {
+                console.error('Ошибка при создании ответа на опрос:', err.message);
+                return res.status(500).send('Ошибка при создании ответа на опрос.');
+            }
 
-        res.status(201).send({ id: this.lastID, message: 'Ответ на опрос зарегистрирован.' });
-    });
-};
+            res.status(201).send({ id: this.lastID, message: 'Ответ на опрос зарегистрирован.' });
+        });
+    };
 
-// Проверка, проходил ли пользователь опрос
+    // Проверка, проходил ли пользователь опрос
     async checkPollResponse(req, res) {
-    const { poll_id, user_id } = req.body;
+        const { poll_id, user_id } = req.body;
 
-    const query = `
+        const query = `
         SELECT * FROM poll_responses WHERE poll_id = ? AND user_id = ?
     `;
 
-    db.get(query, [poll_id, user_id], (err, row) => {
-        if (err) {
-            console.error('Ошибка при проверке ответа на опрос:', err.message);
-            return res.status(500).send('Ошибка при проверке ответа на опрос.');
-        }
+        db.get(query, [poll_id, user_id], (err, row) => {
+            if (err) {
+                console.error('Ошибка при проверке ответа на опрос:', err.message);
+                return res.status(500).send('Ошибка при проверке ответа на опрос.');
+            }
+            console.log(row)
+            if (!row) {
+                console.log('Ответ на опрос не найден.')
+                return res.status(404).send('Ответ на опрос не найден.');
+            }
 
-        if (!row) {
-            return res.status(404).send('Ответ на опрос не найден.');
-        }
+            console.log("row",row)
+            res.status(200).send(row);
+        });
+    };
 
-        res.status(200).send(row);
-    });
-};
-
-// Удаление ответа на опрос
+    // Удаление ответа на опрос
     async deletePollResponse(req, res) {
-    const { id } = req.body;
+        const { id } = req.body;
 
-    const query = `
+        const query = `
         DELETE FROM poll_responses WHERE id = ?
     `;
 
-    db.run(query, [id], function (err) {
-        if (err) {
-            console.error('Ошибка при удалении ответа на опрос:', err.message);
-            return res.status(500).send('Ошибка при удалении ответа на опрос.');
-        }
+        db.run(query, [id], function (err) {
+            if (err) {
+                console.error('Ошибка при удалении ответа на опрос:', err.message);
+                return res.status(500).send('Ошибка при удалении ответа на опрос.');
+            }
 
-        if (this.changes === 0) {
-            return res.status(404).send('Ответ на опрос не найден.');
-        }
+            if (this.changes === 0) {
+                return res.status(404).send('Ответ на опрос не найден.');
+            }
 
-        res.status(200).send('Ответ на опрос удалён.');
-    });
-};
+            res.status(200).send('Ответ на опрос удалён.');
+        });
+    };
 }
 
 module.exports = new PollResponsesController();
